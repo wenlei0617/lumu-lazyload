@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+const DEFAULT_EVENTS = [
+    'scroll',
+    'wheel',
+    'mousewheel',
+    'animationend',
+    'transitionend',
+    'touchmove',
+];
+
 interface LazyloadProps {
     scrollContainer?: HTMLElement; // 🆗
     offset?: number | [number, number]; // 🆗 [top, left]
@@ -57,7 +66,10 @@ const Lazyload: React.FC<LazyloadProps> = (props) => {
             setVisible(isVisible);
 
             if (isVisible) {
-                scrollContainer?.removeEventListener('scroll', checkVisible, false);
+                DEFAULT_EVENTS.forEach((event) => {
+                    scrollContainer?.removeEventListener(event, checkVisible);
+                });
+                window.removeEventListener('resize', checkVisible);
             }
         }
 
@@ -67,17 +79,21 @@ const Lazyload: React.FC<LazyloadProps> = (props) => {
             checkVisible = throttleFunc(checkVisible, throttle);
         }
 
-        scrollContainer?.addEventListener('scroll', checkVisible, false);
+        DEFAULT_EVENTS.forEach((event) => {
+            scrollContainer?.addEventListener(event, checkVisible);
+        });
 
         if (resize) {
-            window.addEventListener('resize', checkVisible, false);
+            window.addEventListener('resize', checkVisible);
         }
 
         checkVisible();
 
         return () => {
-            scrollContainer?.removeEventListener('scroll', checkVisible, false);
-            window.removeEventListener('resize', checkVisible, false);
+            DEFAULT_EVENTS.forEach((event) => {
+                scrollContainer?.removeEventListener(event, checkVisible);
+            })
+            window.removeEventListener('resize', checkVisible);
         }
     }, [scrollContainer, containerRef.current])
 

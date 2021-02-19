@@ -18,8 +18,12 @@ body, html {
 
 .test {
   object-fit: scale-down;
-  height: 3.2rem;
+  height: 2.95rem;
   width: 3.75rem;
   display: block;
   flex-shrink: 0;
+}
+
+img {
+  display: block;
 }
